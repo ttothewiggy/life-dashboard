@@ -1,0 +1,74 @@
+:root {
+  --dash-bg: #f4f3f0;
+  --dash-bg-tint: #ebe9e4;
+  --dash-card: #fdfcfa;
+  --dash-fg: #1a1a1c;
+  --dash-muted: #6b6b70;
+  --dash-border: rgba(26, 26, 28, 0.08);
+  --dash-border-hover: rgba(26, 26, 28, 0.12);
+  --dash-divider: rgba(26, 26, 28, 0.07);
+  --dash-inset: rgba(26, 26, 28, 0.03);
+  --dash-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 12px 40px rgba(0, 0, 0, 0.06);
+  --dash-shadow-hover: 0 1px 2px rgba(0, 0, 0, 0.05), 0 16px 48px rgba(0, 0, 0, 0.08);
+  --dash-good-bg: rgba(46, 125, 90, 0.12);
+  --dash-good-fg: #1f5c40;
+  --dash-fair-bg: rgba(168, 120, 40, 0.14);
+  --dash-fair-fg: #7a5a18;
+  --dash-bad-bg: rgba(140, 60, 60, 0.12);
+  --dash-bad-fg: #7a3030;
+
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--dash-fg);
+  background: var(--dash-bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --dash-bg: #0f0f11;
+    --dash-bg-tint: #141416;
+    --dash-card: #161618;
+    --dash-fg: #ececee;
+    --dash-muted: #98989e;
+    --dash-border: rgba(255, 255, 255, 0.07);
+    --dash-border-hover: rgba(255, 255, 255, 0.11);
+    --dash-divider: rgba(255, 255, 255, 0.08);
+    --dash-inset: rgba(255, 255, 255, 0.04);
+    --dash-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 16px 48px rgba(0, 0, 0, 0.45);
+    --dash-shadow-hover: 0 1px 2px rgba(0, 0, 0, 0.4), 0 20px 56px rgba(0, 0, 0, 0.5);
+    --dash-good-bg: rgba(80, 200, 140, 0.12);
+    --dash-good-fg: #8fd4b0;
+    --dash-fair-bg: rgba(230, 180, 80, 0.12);
+    --dash-fair-fg: #e0c46a;
+    --dash-bad-bg: rgba(240, 120, 120, 0.12);
+    --dash-bad-fg: #e89898;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: linear-gradient(
+    165deg,
+    var(--dash-bg) 0%,
+    var(--dash-bg-tint) 55%,
+    var(--dash-bg) 100%
+  );
+}
+
+#root {
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100svh;
+}
