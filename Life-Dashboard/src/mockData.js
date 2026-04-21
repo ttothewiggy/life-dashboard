@@ -11,7 +11,7 @@ export const skyLabels = {
 export const weatherSnapshot = {
   locationLabel: 'Coastal Bay',
   tempC: 24,
-  windMph: 11,
+  windKph: 18,
   windDirection: 'NW',
   /** @type {'sunny' | 'partly_cloudy' | 'cloudy' | 'rainy' | 'stormy'} */
   sky: 'partly_cloudy',

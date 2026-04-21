@@ -19,8 +19,8 @@ function formatEventDate(isoDate) {
 }
 
 export default function App() {
-  const [windMph, setWindMph] = useState(weatherSnapshot.windMph)
-  const liveWeather = { ...weatherSnapshot, windMph }
+  const [windKph, setWindKph] = useState(weatherSnapshot.windKph)
+  const liveWeather = { ...weatherSnapshot, windKph }
   const activities = getActivityStatuses(liveWeather)
 
   return (
@@ -46,7 +46,7 @@ export default function App() {
             <div className="weather-row">
               <dt>Wind</dt>
               <dd>
-                {liveWeather.windMph} mph {liveWeather.windDirection}
+                {liveWeather.windKph} kph {liveWeather.windDirection}
               </dd>
             </div>
             <div className="weather-row">
@@ -58,7 +58,7 @@ export default function App() {
             <label className="wind-control__label" htmlFor="wind-slider">
               <span className="wind-control__title">Wind speed</span>
               <span className="wind-control__value" aria-live="polite">
-                {windMph} mph
+                {windKph} kph
               </span>
             </label>
             <input
@@ -66,14 +66,14 @@ export default function App() {
               className="wind-slider"
               type="range"
               min={0}
-              max={45}
+              max={80}
               step={1}
-              value={windMph}
-              onChange={(e) => setWindMph(Number(e.target.value))}
+              value={windKph}
+              onChange={(e) => setWindKph(Number(e.target.value))}
               aria-valuemin={0}
-              aria-valuemax={45}
-              aria-valuenow={windMph}
-              aria-valuetext={`${windMph} miles per hour`}
+              aria-valuemax={80}
+              aria-valuenow={windKph}
+              aria-valuetext={`${windKph} kilometers per hour`}
             />
           </div>
         </article>
