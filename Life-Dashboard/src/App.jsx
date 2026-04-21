@@ -3,6 +3,7 @@ import './dashboard.css'
 import { getActivityStatuses } from './activityStatus.js'
 import { skyLabels, upcomingItems, weatherSnapshot } from './mockData.js'
 
+
 function badgeClass(label) {
   if (label === 'Good') return 'activity-badge activity-badge--good'
   if (label === 'Fair') return 'activity-badge activity-badge--fair'
