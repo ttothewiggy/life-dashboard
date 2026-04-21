@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import './dashboard.css'
 import { getActivityStatuses } from './activityStatus.js'
 import { skyLabels, upcomingItems, weatherSnapshot } from './mockData.js'
@@ -18,7 +19,9 @@ function formatEventDate(isoDate) {
 }
 
 export default function App() {
-  const activities = getActivityStatuses(weatherSnapshot)
+  const [windMph, setWindMph] = useState(weatherSnapshot.windMph)
+  const liveWeather = { ...weatherSnapshot, windMph }
+  const activities = getActivityStatuses(liveWeather)
 
   return (
     <div className="dashboard">
@@ -43,7 +46,7 @@ export default function App() {
             <div className="weather-row">
               <dt>Wind</dt>
               <dd>
-                {weatherSnapshot.windMph} mph {weatherSnapshot.windDirection}
+                {liveWeather.windMph} mph {liveWeather.windDirection}
               </dd>
             </div>
             <div className="weather-row">
@@ -51,13 +54,36 @@ export default function App() {
               <dd>{weatherSnapshot.humidityPct}%</dd>
             </div>
           </dl>
+          <div className="wind-control">
+            <label className="wind-control__label" htmlFor="wind-slider">
+              <span className="wind-control__title">Wind speed</span>
+              <span className="wind-control__value" aria-live="polite">
+                {windMph} mph
+              </span>
+            </label>
+            <input
+              id="wind-slider"
+              className="wind-slider"
+              type="range"
+              min={0}
+              max={45}
+              step={1}
+              value={windMph}
+              onChange={(e) => setWindMph(Number(e.target.value))}
+              aria-valuemin={0}
+              aria-valuemax={45}
+              aria-valuenow={windMph}
+              aria-valuetext={`${windMph} miles per hour`}
+            />
+          </div>
         </article>
 
         <article className="card">
           <p className="card__eyebrow">Activities</p>
           <h2 className="card__title">Today&apos;s conditions</h2>
           <p className="card__meta">
-            Based on wind, sky, temperature, and swell from the weather card.
+            Updates when you move the wind slider on the weather card (other fields stay
+            from the mock snapshot).
           </p>
           <ul className="activity-list">
             <li className="activity-item">
