@@ -32,7 +32,7 @@ export default function App() {
     <div className="dashboard">
       <header className="dashboard__header">
         <h1 className="dashboard__title">Life dashboard</h1>
-        <p className="dashboard__subtitle">Sample data — I'm going to wire up live API's soon. 
+        <p className="dashboard__subtitle">Sample data — I'm going to wire up live API's soon.</p>
       </header>
 
       <div className="dashboard__grid">
