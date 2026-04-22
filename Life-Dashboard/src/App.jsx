@@ -1,7 +1,10 @@
 import { useState } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import './dashboard.css'
 import { getActivityStatuses } from './activityStatus.js'
 import { skyLabels, upcomingItems, weatherSnapshot } from './mockData.js'
+import { WindCompass } from './WindCompass.jsx'
+
 
 
 function badgeClass(label) {
@@ -21,14 +24,15 @@ function formatEventDate(isoDate) {
 
 export default function App() {
   const [windKph, setWindKph] = useState(weatherSnapshot.windKph)
-  const liveWeather = { ...weatherSnapshot, windKph }
+  const [windDirection, setWindDirection] = useState(weatherSnapshot.windDirection)
+  const liveWeather = { ...weatherSnapshot, windKph, windDirection }
   const activities = getActivityStatuses(liveWeather)
 
   return (
     <div className="dashboard">
       <header className="dashboard__header">
         <h1 className="dashboard__title">Life dashboard</h1>
-        <p className="dashboard__subtitle">Sample data — wire up live sources when you are ready.</p>
+        <p className="dashboard__subtitle">Sample data — I'm going to wire up live API's soon. 
       </header>
 
       <div className="dashboard__grid">
@@ -76,6 +80,7 @@ export default function App() {
               aria-valuenow={windKph}
               aria-valuetext={`${windKph} kilometers per hour`}
             />
+            <WindCompass value={windDirection} onChange={setWindDirection} />
           </div>
         </article>
 
@@ -144,6 +149,7 @@ export default function App() {
           </ul>
         </article>
       </div>
+      <Analytics />
     </div>
   )
 }
