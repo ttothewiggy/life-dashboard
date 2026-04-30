@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import './dashboard.css'
 import { getActivityStatuses } from './activityStatus.js'
 import { skyLabels, upcomingItems, weatherSnapshot } from './mockData.js'
 import { WindCompass } from './WindCompass.jsx'
+import { fetchWeatherAndMarine, reverseGeocodeBest } from './weatherApi.js'
 
 
 
@@ -23,47 +24,113 @@ function formatEventDate(isoDate) {
 }
 
 export default function App() {
-  const [windKph, setWindKph] = useState(weatherSnapshot.windKph)
-  const [windDirection, setWindDirection] = useState(weatherSnapshot.windDirection)
-  const liveWeather = { ...weatherSnapshot, windKph, windDirection }
-  const activities = getActivityStatuses(liveWeather)
+  const [weather, setWeather] = useState(weatherSnapshot)
+  const [weatherStatus, setWeatherStatus] = useState({ state: 'idle', message: '' })
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function load() {
+      setWeatherStatus({ state: 'loading', message: 'Getting your location…' })
+
+      const coords = await new Promise((resolve) => {
+        if (!('geolocation' in navigator)) return resolve(null)
+        navigator.geolocation.getCurrentPosition(
+          (pos) =>
+            resolve({
+              latitude: pos.coords.latitude,
+              longitude: pos.coords.longitude,
+            }),
+          () => resolve(null),
+          { enableHighAccuracy: false, timeout: 8000, maximumAge: 5 * 60 * 1000 },
+        )
+      })
+
+      if (!coords) {
+        if (cancelled) return
+        setWeather((prev) => ({ ...prev, locationLabel: 'Location permission required' }))
+        setWeatherStatus({
+          state: 'error',
+          message: 'Enable location access to show your live location and local weather.',
+        })
+        return
+      }
+
+      try {
+        setWeatherStatus({ state: 'loading', message: 'Fetching live weather…' })
+        const [live, label] = await Promise.all([
+          fetchWeatherAndMarine(coords),
+          reverseGeocodeBest(coords).catch(() => null),
+        ])
+
+        if (cancelled) return
+
+        setWeather((prev) => ({
+          ...prev,
+          locationLabel: label ?? 'Your location',
+          tempC: live.tempC ?? prev.tempC,
+          windKph: live.windKph ?? prev.windKph,
+          windDirection: live.windDirection ?? prev.windDirection,
+          sky: live.sky ?? prev.sky,
+          humidityPct: live.humidityPct ?? prev.humidityPct,
+          swellM: live.swellM ?? prev.swellM,
+          swellPeriodS: live.swellPeriodS ?? prev.swellPeriodS,
+        }))
+        setWeatherStatus({ state: 'live', message: 'Live weather loaded.' })
+      } catch {
+        if (cancelled) return
+        setWeatherStatus({
+          state: 'error',
+          message: 'Could not load live weather. Location is live, but weather is unavailable right now.',
+        })
+      }
+    }
+
+    load()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const activities = useMemo(() => getActivityStatuses(weather), [weather])
 
   return (
     <div className="dashboard">
       <header className="dashboard__header">
         <h1 className="dashboard__title">Life dashboard</h1>
-        <p className="dashboard__subtitle">Sample data — I'm going to wire up live API's soon.</p>
+        <p className="dashboard__subtitle">Local weather uses your live location (browser permission required).</p>
       </header>
 
       <div className="dashboard__grid">
         <article className="card">
           <p className="card__eyebrow">Weather</p>
-          <h2 className="card__title">{weatherSnapshot.locationLabel}</h2>
+          <h2 className="card__title">{weather.locationLabel}</h2>
           <div className="weather-hero">
-            <span className="weather-hero__value">{weatherSnapshot.tempC}</span>
+            <span className="weather-hero__value">{weather.tempC}</span>
             <span className="weather-hero__unit">°C</span>
           </div>
           <dl className="weather-rows">
             <div className="weather-row">
               <dt>Sky</dt>
-              <dd>{skyLabels[weatherSnapshot.sky]}</dd>
+              <dd>{skyLabels[weather.sky]}</dd>
             </div>
             <div className="weather-row">
               <dt>Wind</dt>
               <dd>
-                {liveWeather.windKph} kph {liveWeather.windDirection}
+                {weather.windKph} kph {weather.windDirection}
               </dd>
             </div>
             <div className="weather-row">
               <dt>Humidity</dt>
-              <dd>{weatherSnapshot.humidityPct}%</dd>
+              <dd>{weather.humidityPct}%</dd>
             </div>
           </dl>
           <div className="wind-control">
             <label className="wind-control__label" htmlFor="wind-slider">
-              <span className="wind-control__title">Wind speed</span>
+              <span className="wind-control__title">Wind (what-if)</span>
               <span className="wind-control__value" aria-live="polite">
-                {windKph} kph
+                {weather.windKph} kph
               </span>
             </label>
             <input
@@ -73,14 +140,26 @@ export default function App() {
               min={0}
               max={80}
               step={1}
-              value={windKph}
-              onChange={(e) => setWindKph(Number(e.target.value))}
+              value={weather.windKph}
+              onChange={(e) =>
+                setWeather((prev) => ({
+                  ...prev,
+                  windKph: Number(e.target.value),
+                }))
+              }
               aria-valuemin={0}
               aria-valuemax={80}
-              aria-valuenow={windKph}
-              aria-valuetext={`${windKph} kilometers per hour`}
+              aria-valuenow={weather.windKph}
+              aria-valuetext={`${weather.windKph} kilometers per hour`}
             />
-            <WindCompass value={windDirection} onChange={setWindDirection} />
+            <WindCompass
+              value={weather.windDirection}
+              onChange={(dir) => setWeather((prev) => ({ ...prev, windDirection: dir }))}
+            />
+            <p className="wind-control__hint" aria-live="polite">
+              {weatherStatus.state === 'loading' ? weatherStatus.message : null}
+              {weatherStatus.state === 'error' ? weatherStatus.message : null}
+            </p>
           </div>
         </article>
 

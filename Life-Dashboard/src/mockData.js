@@ -9,7 +9,7 @@ export const skyLabels = {
 }
 
 export const weatherSnapshot = {
-  locationLabel: 'Coastal Bay',
+  locationLabel: 'Locating…',
   tempC: 24,
   windKph: 18,
   windDirection: 'NW',
