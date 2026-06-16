@@ -50,7 +50,7 @@ export async function fetchWeatherAndMarine({ latitude, longitude }) {
 
   const weatherUrl = `https://api.open-meteo.com/v1/forecast?${baseParams}&current=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m,relative_humidity_2m&temperature_unit=celsius&wind_speed_unit=kmh`
 
-  const marineUrl = `https://marine-api.open-meteo.com/v1/marine?${baseParams}&current=wave_height,wave_period`
+  const marineUrl = `https://marine-api.open-meteo.com/v1/marine?${baseParams}&current=wave_height,wave_period,sea_surface_temperature`
 
   const [weather, marine] = await Promise.all([fetchJson(weatherUrl), fetchJson(marineUrl)])
 
@@ -69,6 +69,10 @@ export async function fetchWeatherAndMarine({ latitude, longitude }) {
     sky: weatherCodeToSky(cw.weather_code),
     swellM: typeof cm.wave_height === 'number' ? Number(cm.wave_height.toFixed(1)) : null,
     swellPeriodS: typeof cm.wave_period === 'number' ? Math.round(cm.wave_period) : null,
+    seaTempC:
+      typeof cm.sea_surface_temperature === 'number'
+        ? Math.round(cm.sea_surface_temperature)
+        : null,
     fetchedAtIso: new Date().toISOString(),
   }
 }
