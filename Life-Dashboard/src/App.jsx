@@ -186,42 +186,15 @@ export default function App() {
                 {weather.windKph} kph {weather.windDirection}
               </dd>
             </div>
+            <div className="weather-row">
+            <dt>Wetsuit</dt>
+              <dd>
+              {activities.wetsuit.label}
+              </dd>
+            </div>
+            <p className="card__meta">{activities.wetsuit.detail}</p>
           </dl>
-          <div className="wind-control">
-            <label className="wind-control__label" htmlFor="wind-slider">
-              <span className="wind-control__title">Wind (what-if)</span>
-              <span className="wind-control__value" aria-live="polite">
-                {weather.windKph} kph
-              </span>
-            </label>
-            <input
-              id="wind-slider"
-              className="wind-slider"
-              type="range"
-              min={0}
-              max={80}
-              step={1}
-              value={weather.windKph}
-              onChange={(e) =>
-                setWeather((prev) => ({
-                  ...prev,
-                  windKph: Number(e.target.value),
-                }))
-              }
-              aria-valuemin={0}
-              aria-valuemax={80}
-              aria-valuenow={weather.windKph}
-              aria-valuetext={`${weather.windKph} kilometers per hour`}
-            />
-            <WindCompass
-              value={weather.windDirection}
-              onChange={(dir) => setWeather((prev) => ({ ...prev, windDirection: dir }))}
-            />
-            <p className="wind-control__hint" aria-live="polite">
-              {weatherStatus.state === 'loading' ? weatherStatus.message : null}
-              {weatherStatus.state === 'error' ? weatherStatus.message : null}
-            </p>
-          </div>
+          
         </article>
 
         <article className="card">

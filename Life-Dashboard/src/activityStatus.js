@@ -11,17 +11,19 @@ const SKY = {
   stormy: 4,
 }
 
+
 /**
  * @param {typeof import('./mockData.js').weatherSnapshot} env
  */
 export function getActivityStatuses(env) {
-  const { tempC, windKph, sky, swellM, swellPeriodS } = env
+  const { tempC, windKph, sky, swellM, swellPeriodS, seaTempC } = env
   const skyRank = SKY[sky] ?? 1
 
   return {
     paddleboarding: statusPaddle(tempC, windKph, skyRank),
     surfing: statusSurf(windKph, skyRank, swellM, swellPeriodS),
     boating: statusBoat(windKph, skyRank),
+    wetsuit: statusWetsuit(seaTempC, windKph),
   }
 }
 
@@ -85,4 +87,52 @@ function statusBoat(windKph, skyRank) {
     return { label: 'Fair', detail: 'Experienced crews only; watch gusts and squalls.' }
   }
   return { label: 'Good', detail: 'Moderate breeze and stable sky — routine day on the water.' }
+}
+
+function statusWetsuit(seaTempC, windKph) {
+  if (typeof seaTempC !== 'number') {
+    return {
+      label: 'Unknown',
+      detail: 'Sea temperature unavailable — check temp on locals bouys yourself you lazy bum.',
+    }
+  }
+
+  const windChill = windKph >= 25
+
+  if (seaTempC >= 22) {
+    return {
+      label: windChill ? 'Spring suit' : 'Boardshorts',
+      detail: windChill
+        ? 'Warm water, but the wind may make a spring suit more comfortable.'
+        : 'Warm water — boardshorts or a light rash vest should be fine.',
+    }
+  }
+
+  if (seaTempC >= 19) {
+    return {
+      label: windChill ? '3/2 full suit' : 'Spring suit',
+      detail: windChill
+        ? 'Mild water with wind chill — a 3/2 is the safer call.'
+        : 'Mild water — a spring suit should be enough for most sessions.',
+    }
+  }
+
+  if (seaTempC >= 16) {
+    return {
+      label: '3/2 full suit',
+      detail: 'Cool water — a 3/2 full suit is the one.',
+    }
+  }
+
+  if (seaTempC >= 13) {
+    return {
+      label: '4/3 full suit',
+      detail: 'Cold water — a 4/3 is the comfortable choice.',
+    }
+  }
+
+  return {
+    label: '5/4 full suit',
+    detail: 'Very cold water — consider hood, boots, and gloves depending on exposure.',
+  }
 }
