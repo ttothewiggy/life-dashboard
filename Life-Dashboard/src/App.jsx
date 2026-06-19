@@ -111,6 +111,7 @@ export default function App() {
             <span className="weather-hero__value">{weather.tempC}</span>
             <span className="weather-hero__unit">°C</span>
           </div>
+          <dt>Air Temp</dt>
           <dl className="weather-rows">
             <div className="weather-row">
               <dt>Sky</dt>
@@ -171,6 +172,7 @@ export default function App() {
             <span className="weather-hero__value">{weather.seaTempC ?? '--'}</span>
             <span className="weather-hero__unit">°C</span>
           </div>
+          <dt>Sea Temp</dt>
           <dl className="weather-rows">
             <div className="weather-row">
               <dt>Swell</dt>
